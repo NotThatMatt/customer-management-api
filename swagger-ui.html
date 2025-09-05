@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Management API Documentation</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui.css" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin:0;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            // Update this URL to point to your deployed API Gateway URL
+            const apiUrl = 'https://z2a5hah3zf.execute-api.us-east-1.amazonaws.com/Prod';
+            
+            // Load the swagger spec
+            const spec = {
+                "openapi": "3.0.0",
+                "info": {
+                    "title": "Customer Management API",
+                    "description": "A serverless CRUD API for customer management",
+                    "version": "1.0.0"
+                },
+                "servers": [
+                    {
+                        "url": apiUrl,
+                        "description": "Production server"
+                    }
+                ],
+                "paths": {
+                    "/customers": {
+                        "get": {
+                            "summary": "List all customers",
+                            "responses": {
+                                "200": {
+                                    "description": "Successful response",
+                                    "content": {
+                                        "application/json": {
+                                            "schema": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "customers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "$ref": "#/components/schemas/Customer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "post": {
+                            "summary": "Create a new customer",
+                            "requestBody": {
+                                "required": true,
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/CustomerInput"
+                                        }
+                                    }
+                                }
+                            },
+                            "responses": {
+                                "201": {
+                                    "description": "Customer created successfully",
+                                    "content": {
+                                        "application/json": {
+                                            "schema": {
+                                                "$ref": "#/components/schemas/Customer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "400": {
+                                    "description": "Bad request"
+                                }
+                            }
+                        }
+                    },
+                    "/customers/{customer_id}": {
+                        "get": {
+                            "summary": "Get a customer by ID",
+                            "parameters": [
+                                {
+                                    "name": "customer_id",
+                                    "in": "path",
+                                    "required": true,
+                                    "schema": {
+                                        "type": "string"
+                                    }
+                                }
+                            ],
+                            "responses": {
+                                "200": {
+                                    "description": "Successful response",
+                                    "content": {
+                                        "application/json": {
+                                            "schema": {
+                                                "$ref": "#/components/schemas/Customer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "404": {
+                                    "description": "Customer not found"
+                                }
+                            }
+                        },
+                        "put": {
+                            "summary": "Update a customer",
+                            "parameters": [
+                                {
+                                    "name": "customer_id",
+                                    "in": "path",
+                                    "required": true,
+                                    "schema": {
+                                        "type": "string"
+                                    }
+                                }
+                            ],
+                            "requestBody": {
+                                "required": true,
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/CustomerInput"
+                                        }
+                                    }
+                                }
+                            },
+                            "responses": {
+                                "200": {
+                                    "description": "Customer updated successfully",
+                                    "content": {
+                                        "application/json": {
+                                            "schema": {
+                                                "$ref": "#/components/schemas/Customer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "404": {
+                                    "description": "Customer not found"
+                                }
+                            }
+                        },
+                        "delete": {
+                            "summary": "Delete a customer",
+                            "parameters": [
+                                {
+                                    "name": "customer_id",
+                                    "in": "path",
+                                    "required": true,
+                                    "schema": {
+                                        "type": "string"
+                                    }
+                                }
+                            ],
+                            "responses": {
+                                "204": {
+                                    "description": "Customer deleted successfully"
+                                },
+                                "404": {
+                                    "description": "Customer not found"
+                                }
+                            }
+                        }
+                    },
+                    "/seed": {
+                        "post": {
+                            "summary": "Seed the database with sample customers",
+                            "responses": {
+                                "201": {
+                                    "description": "Database seeded successfully",
+                                    "content": {
+                                        "application/json": {
+                                            "schema": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "message": {
+                                                        "type": "string"
+                                                    },
+                                                    "customers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "$ref": "#/components/schemas/Customer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "components": {
+                    "schemas": {
+                        "Customer": {
+                            "type": "object",
+                            "properties": {
+                                "customer_id": {"type": "string"},
+                                "first_name": {"type": "string"},
+                                "last_name": {"type": "string"},
+                                "date_of_birth": {"type": "string", "format": "date"},
+                                "address": {"type": "string"},
+                                "city": {"type": "string"},
+                                "state": {"type": "string"},
+                                "postal_code": {"type": "string"},
+                                "phone_number": {"type": "string"},
+                                "email_address": {"type": "string", "format": "email"},
+                                "customer_acquisition_date": {"type": "string", "format": "date-time"},
+                                "preferred_communication_channels": {
+                                    "type": "array",
+                                    "items": {"type": "string", "enum": ["email", "text", "phone"]}
+                                },
+                                "is_loyalty_member": {"type": "string", "enum": ["y", "n"]},
+                                "customer_status": {"type": "string", "enum": ["active", "inactive", "canceled"]},
+                                "lifetime_value": {"type": "number", "format": "float"}
+                            }
+                        },
+                        "CustomerInput": {
+                            "type": "object",
+                            "required": ["first_name", "last_name", "email_address"],
+                            "properties": {
+                                "first_name": {"type": "string"},
+                                "last_name": {"type": "string"},
+                                "date_of_birth": {"type": "string", "format": "date"},
+                                "address": {"type": "string"},
+                                "city": {"type": "string"},
+                                "state": {"type": "string"},
+                                "postal_code": {"type": "string"},
+                                "phone_number": {"type": "string"},
+                                "email_address": {"type": "string", "format": "email"},
+                                "preferred_communication_channels": {
+                                    "type": "array",
+                                    "items": {"type": "string", "enum": ["email", "text", "phone"]}
+                                },
+                                "is_loyalty_member": {"type": "string", "enum": ["y", "n"], "default": "n"},
+                                "customer_status": {"type": "string", "enum": ["active", "inactive", "canceled"], "default": "active"},
+                                "lifetime_value": {"type": "number", "format": "float", "default": 0.0}
+                            }
+                        }
+                    }
+                }
+            };
+
+            const ui = SwaggerUIBundle({
+                spec: spec,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout"
+            });
+        };
+    </script>
+</body>
+</html>
